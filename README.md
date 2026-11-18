@@ -35,7 +35,8 @@ data/
 3_powerbi/
   GUIDE_POWERBI.md          Construction pas à pas du rapport
   mesures_DAX.dax           15 mesures DAX
-  apercu_maquette.png       Rendu visé
+  apercu_powerbi.png        Capture du rapport final
+  HR_Analytics.pbix         Rapport Power BI
 4_python/
   analyse_rh.py             Nettoyage, analyse, graphiques, rapport
   Rapport_Analyse_RH.pdf    Rapport généré (4 pages)
@@ -45,7 +46,7 @@ data/
 ## Aperçus
 
 ![Dashboard Excel](1_excel/apercu_dashboard.png)
-![Power BI](3_powerbi/apercu_maquette.png)
+![Power BI](3_powerbi/apercu_powerbi.png)
 ![Python](4_python/figures/02_turnover_satisfaction.png)
 
 ## Reproduire
