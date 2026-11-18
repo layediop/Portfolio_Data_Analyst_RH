@@ -1,0 +1,67 @@
+// =============================================================
+// Projet 3 : Power BI — Mesures DAX du rapport « HR Analytics »
+// Table de faits : Employes (data/employes.csv)
+// Table de dates : Calendrier (voir guide, étape 2)
+// =============================================================
+
+// ---------- Effectifs ----------
+Total Employes = COUNTROWS ( Employes )
+
+Effectif Actif =
+CALCULATE ( [Total Employes], Employes[statut] = "Actif" )
+
+Departs =
+CALCULATE ( [Total Employes], Employes[statut] = "Parti" )
+
+Taux Turnover =
+DIVIDE ( [Departs], [Total Employes], 0 )
+
+// ---------- Rémunération ----------
+Salaire Moyen =
+CALCULATE ( AVERAGE ( Employes[salaire_annuel] ), Employes[statut] = "Actif" )
+
+Masse Salariale =
+CALCULATE ( SUM ( Employes[salaire_annuel] ), Employes[statut] = "Actif" )
+
+Ecart Salarial F/H =
+VAR SalH = CALCULATE ( [Salaire Moyen], Employes[genre] = "H" )
+VAR SalF = CALCULATE ( [Salaire Moyen], Employes[genre] = "F" )
+RETURN DIVIDE ( SalH - SalF, SalH )
+
+// ---------- Engagement ----------
+Satisfaction Moyenne =
+CALCULATE ( AVERAGE ( Employes[satisfaction] ), Employes[statut] = "Actif" )
+
+Absences Moyennes =
+AVERAGE ( Employes[jours_absence] )
+
+Pct Femmes =
+DIVIDE (
+    CALCULATE ( [Effectif Actif], Employes[genre] = "F" ),
+    [Effectif Actif]
+)
+
+// ---------- Temps (relation active Calendrier[Date] -> Employes[date_embauche]) ----------
+Embauches = COUNTROWS ( Employes )
+
+Embauches Cumulees =
+CALCULATE (
+    [Embauches],
+    FILTER ( ALL ( Calendrier[Date] ), Calendrier[Date] <= MAX ( Calendrier[Date] ) )
+)
+
+// Départs par date de départ (relation inactive Calendrier[Date] -> Employes[date_depart])
+Departs Periode =
+CALCULATE (
+    [Total Employes],
+    USERELATIONSHIP ( Calendrier[Date], Employes[date_depart] )
+)
+
+// ---------- Mise en forme conditionnelle ----------
+Couleur Turnover =
+SWITCH (
+    TRUE (),
+    [Taux Turnover] >= 0.20, "#C0392B",   // rouge : alerte
+    [Taux Turnover] >= 0.15, "#E67E22",   // orange : vigilance
+    "#1E8449"                              // vert : sain
+)
